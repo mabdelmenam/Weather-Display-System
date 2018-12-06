@@ -1,4 +1,5 @@
 from xml.dom import minidom
+from bs4 import BeautifulSoup
 import mysql.connector
 import sys
 import re
@@ -16,8 +17,13 @@ for file in glob.glob("*.xhtml"):
      degr = doc.getElementsByTagName("h1")[1]
      degrData = degr.firstChild.data
      degrRegex = re.findall(r'\d{0,2}[^F\°]',degrData)
-          
-     cond = doc.getElementsByTagName("h4")[2]
+     
+     dom = BeautifulSoup(open(file), "html.parser")
+
+     #cond = doc.getElementsByTagName("h4")[2]
+     #cond = doc.getElementsByClassName("myforecast-current")
+     cond = dom.find_all("h4", class_="myforecast-current").text.strip()
+     print("CONDITION: " ,cond)
           
      city = doc.getElementsByTagName("a")[10]
      cityData = city.firstChild.data
@@ -38,10 +44,10 @@ for file in glob.glob("*.xhtml"):
                
           
      print("STATE:%s,StateCity:%s, Degrees:%s, Condition:%s" % (stateRegex[0],cityRegex[0], degrRegex[0],
-                                             cond.firstChild.data))
+                                             cond))
      a1 = stateRegex[0]
      a2 = cityRegex[0]
-     a3 = cond.firstChild.data
+     a3 = cond
      a4 = degrRegex[0]
      table = doc.getElementsByTagName("table")
      for j in table[0].getElementsByTagName("tbody"):
@@ -58,7 +64,7 @@ for file in glob.glob("*.xhtml"):
                     print("pressure:%s" % (number[0]))
                     a6 = number[0]
      try:
-          cnx = mysql.connector.connect(host='localhost', user='root', password='password', database='weather')
+          cnx = mysql.connector.connect(host='localhost', user='root', password='', database='weather')
           cursor = cnx.cursor()
      
           insert(cursor, a1, a2, a3, a4, a5, a6)
