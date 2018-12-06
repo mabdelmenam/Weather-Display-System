@@ -42,5 +42,6 @@ python3 WebsiteParser.py
 done
 sleep 3600
 done
+echo "------------------------------------------------"
 
 #java -jar tagsoup-1.2.1.jar --files yyyy-mm-dd-hh-mm-ss-AB.html
